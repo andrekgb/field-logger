@@ -2,11 +2,14 @@ import {Box} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {useSelector} from "react-redux";
 import {selectCurrentErrorMessage, selectCurrentErrorMetaData} from "../features/error/errorSlice";
+import {useRouteError} from "react-router-dom";
 
 const ErrorPage = () => {
 
     const message = useSelector(selectCurrentErrorMessage);
     const metadata = useSelector(selectCurrentErrorMetaData);
+    const error = useRouteError();
+    console.error('Route Error', error);
 
     return (
         <Box sx={{

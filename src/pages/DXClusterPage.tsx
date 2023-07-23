@@ -43,7 +43,7 @@ const DXClusterPage = () => {
         const headerCellStyle = { background: 'white' };
         return (
             <TableVirtuoso
-                style={{ height: 'calc(100vh - 145px)' }}
+                style={{ height: 'calc(100vh - 145px)', width: '100%' }}
                 data={data}
                 fixedHeaderContent={() => (
                     <TableRow>
