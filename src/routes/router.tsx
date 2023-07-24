@@ -32,6 +32,6 @@ const router = createBrowserRouter([
             }
         ]
     }
-]);
+], { basename: "/field-logger" });
 
 export default router;
