@@ -5,7 +5,6 @@ import LogbooksPage from "../pages/LogbooksPage";
 import ErrorPage from "../pages/ErrorPage";
 import BaseLayout from "../layouts/BaseLayout";
 import SettingsPage from "../pages/SettingsPage";
-import DXClusterPage from "../pages/DXClusterPage";
 import LogbookPage from "../pages/LogbookPage";
 
 const router = createBrowserRouter([
@@ -25,10 +24,6 @@ const router = createBrowserRouter([
             {
                 path: "settings",
                 element: <SettingsPage />,
-            },
-            {
-                path: "dx-cluster",
-                element: <DXClusterPage />,
             }
         ]
     }

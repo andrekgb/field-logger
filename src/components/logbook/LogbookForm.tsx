@@ -22,7 +22,7 @@ const LogbookForm = (props: {isOpened: boolean, onCreateSuccess: () => void, onC
     } = useForm<Logbook>();
 
     const onSubmit: SubmitHandler<Logbook> = (data) => {
-        db.logbooks.add({name: data.name, template: data.template})
+        db.logbooks.add({name: data.name, callsign:data.callsign, template: data.template})
             .then(() => {
                 toast.success('Logbook created');
                 setValue('name', '');
@@ -53,9 +53,19 @@ const LogbookForm = (props: {isOpened: boolean, onCreateSuccess: () => void, onC
                     <FormControl variant="standard">
                         <TextField
                             fullWidth={true}
-                            label={'Name'}
+                            label={'Logbook name'}
                             variant={'outlined'}
                             {...register('name', { required: true })}
+                        />
+                        { errors.name && <FormHelperText error={true}>This field is required</FormHelperText> }
+                    </FormControl>
+
+                    <FormControl variant="standard">
+                        <TextField
+                            fullWidth={true}
+                            label={'Your callsign'}
+                            variant={'outlined'}
+                            {...register('callsign', { required: true })}
                         />
                         { errors.name && <FormHelperText error={true}>This field is required</FormHelperText> }
                     </FormControl>

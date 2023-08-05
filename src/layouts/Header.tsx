@@ -12,7 +12,6 @@ import {useNavigate} from "react-router-dom";
 import {Box, ListItemIcon} from "@mui/material";
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import AppSettingsAltIcon from '@mui/icons-material/AppSettingsAlt';
-import PowerIcon from '@mui/icons-material/Power';
 import UTCClock from "../components/UTCClock";
 
 
@@ -49,15 +48,6 @@ const Header: React.FC = () => {
                 <ListItemText primary="Settings" onClick={() => {
                     setDrawerOpen(false);
                     navigate('/settings');
-                }}/>
-            </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <PowerIcon/>
-                </ListItemIcon>
-                <ListItemText primary="DX Cluster" onClick={() => {
-                    setDrawerOpen(false);
-                    navigate('/dx-cluster');
                 }}/>
             </ListItem>
             {/* Add more menu items as needed */}

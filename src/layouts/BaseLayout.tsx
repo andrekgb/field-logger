@@ -6,7 +6,12 @@ import {ToastContainer} from 'react-toastify';
 
 const BaseLayout = () => {
     return (
-        <div>
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+            backgroundColor: '#f5f5f5',
+        }}>
             <Header/>
             <Box sx={{
                 padding: '1rem',
@@ -26,7 +31,7 @@ const BaseLayout = () => {
                 pauseOnHover
                 theme="light"
             />
-        </div>
+        </Box>
     );
 }
 

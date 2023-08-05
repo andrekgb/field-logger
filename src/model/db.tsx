@@ -11,6 +11,7 @@ export enum LogbookTemplate {
 export interface Logbook {
     id?: number;
     name: string;
+    callsign: string;
     template: LogbookTemplate;
 }
 
@@ -20,7 +21,7 @@ export class LogbookDatabase extends Dexie {
     constructor() {
         super('logbookDatabase');
         this.version(1).stores({
-            logbooks: '++id,name'
+            logbooks: '++id,name,callsign,template'
         });
         this.logbooks = this.table('logbooks');
     }
