@@ -5,30 +5,21 @@ export enum LogbookTemplate {
     POTA = 'POTA',
     SOTA = 'SOTA',
     SST = 'SST',
-};
+}
 
-// https://www.adif.org/100/adif_100.htm
-// https://df3cb.com/ftdxrc/documentation/references/adif.php
-export interface LogbookEntry {
+export interface QSO {
     id?: number;
     logbookId: number;
-    STATION_CALLSIGN: string;
-    QSO_DATE: string;
-    TIME_ON: string;
-    CALL: string;
-    BAND: string;
-    MODE: string;
-    RST_SENT: string;
-    RST_RCVD: string;
-    NAME?: string;
-    QTH?: string;
-    COMMENTS?: string;
-    SRX?: string;
-    STX?: string;
-    STATE?: string;
-    TX_PWR?: string;
-    FREQ?: number;
-    COMMENT?: string;
+    callsign: string;
+    date: Date;
+    frequency?: number;
+    band: string;
+    mode: string;
+    rstSent: string;
+    rstReceived: string;
+    name?: string;
+    qth?: string;
+    comments?: string;
 }
 
 export interface Logbook {
@@ -36,20 +27,49 @@ export interface Logbook {
     name: string;
     callsign: string;
     template: LogbookTemplate;
+    qsoCount?: number;
 }
 
 export class LogbookDatabase extends Dexie {
-
-    logbooks: Table<Logbook>;
-    contacts: Table<LogbookEntry>;
+    logbooks: Table<Logbook, number>;
+    qsos: Table<QSO, number>;
     constructor() {
-        super('logbookDatabase');
+        super('fieldlogger');
         this.version(1).stores({
-            logbooks: '++id,name,callsign,template',
-            contacts: '++id,logbookId,STATION_CALLSIGN,QSO_DATE,TIME_ON,CALL,BAND,MODE,RST_SENT,RST_RCVD,NAME,QTH,COMMENTS,SRX,STX,STATE,TX_PWR,FREQ,COMMENT'
+            logbooks: '++id,name,callsign,template,qsoCount',
+            qsos: '++id,logbookId,callsign,date,frequency,band,mode,rstSent,rstReceived,name,qth,comments'
         });
         this.logbooks = this.table('logbooks');
-        this.contacts = this.table('contacts');
+        this.qsos = this.table('qsos');
+    }
+
+    async insertLogbook(logbook: Logbook): Promise<number> {
+        logbook.qsoCount = 0;
+        return await this.logbooks.add(logbook);
+    }
+
+    async updateLogbook(logbook: Logbook): Promise<void> {
+        await this.logbooks.put(logbook);
+    }
+
+    async deleteLogbook(id: number): Promise<void> {
+        await this.logbooks.delete(id);
+        await this.qsos.where('logbookId').equals(id).delete();
+    }
+
+    async insertQSO(qso: QSO): Promise<number> {
+        const qsoId = await this.qsos.add(qso);
+        await this.logbooks.update(qso.logbookId, {qsoCount: await this.qsos.where('logbookId').equals(qso.logbookId).count()});
+        return qsoId;
+    }
+
+    async updateQSO(qso: QSO): Promise<void> {
+        await this.qsos.put(qso);
+    }
+
+    async deleteQSO(id: number, logbookId: number): Promise<void> {
+        await this.qsos.delete(id);
+        await this.logbooks.update(logbookId, {qsoCount: await this.qsos.where('logbookId').equals(logbookId).count()});
     }
 }
 

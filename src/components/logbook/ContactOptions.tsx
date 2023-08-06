@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import {db, LogbookEntry} from "../../model/db";
+import {db, QSO} from "../../model/db";
 import IconButton from '@mui/material/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 import {Button, DialogContentText, Divider} from "@mui/material";
@@ -12,9 +12,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import {useDispatch} from "react-redux";
 import {displayError} from "../../features/error/errorSlice";
+import moment from "moment/moment";
 
 interface ContactOptionsProps {
-    contact: LogbookEntry;
+    qso: QSO;
 }
 
 const ContactOptions = (props: ContactOptionsProps) => {
@@ -22,7 +23,7 @@ const ContactOptions = (props: ContactOptionsProps) => {
     const open = Boolean(anchorEl);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
     const dispact = useDispatch();
-    const { contact } = props;
+    const { qso } = props;
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -31,7 +32,7 @@ const ContactOptions = (props: ContactOptionsProps) => {
     };
 
     const deleteContact = () => {
-        db.contacts.delete(contact.id || 0)
+        db.deleteQSO(qso.id || 0, qso.logbookId || 0)
             .then(() => {
                 toast.success('QSO deleted');
             })
@@ -51,7 +52,7 @@ const ContactOptions = (props: ContactOptionsProps) => {
                 <DialogTitle>Are you sure?</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete the QSO with <strong>{contact.CALL}</strong> on <strong>{contact.QSO_DATE} {contact.TIME_ON}</strong> <br/><br/>
+                        Are you sure you want to delete the QSO with <strong>{qso.callsign}</strong> on <strong>{moment(qso.date).format('MMM D, YYYY, h:mm a')}</strong> <br/><br/>
                         <strong>This action cannot be undone.</strong>
                     </DialogContentText>
                 </DialogContent>
@@ -67,7 +68,7 @@ const ContactOptions = (props: ContactOptionsProps) => {
     return (
         <div>
             <IconButton
-                id={`contact-options-${contact.id}`}
+                id={`contact-options-${qso.id}`}
                 aria-controls={open ? 'basic-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
@@ -77,12 +78,12 @@ const ContactOptions = (props: ContactOptionsProps) => {
                 <SettingsIcon fontSize={'inherit'} />
             </IconButton >
             <Menu
-                id={`contact-options-menu-${contact.id}`}
+                id={`contact-options-menu-${qso.id}`}
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{
-                    'aria-labelledby': `contact-options-${contact.id}`,
+                    'aria-labelledby': `contact-options-${qso.id}`,
                 }}
             >
                 <MenuItem onClick={()=> {
