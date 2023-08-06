@@ -22,7 +22,7 @@ const LogbookPage = () => {
     return (
         <Box sx={{ display:'flex', flexDirection: 'column', gap:'1rem' }}>
             <PageTitle title={logbook.name}/>
-            <ContactForm logbookId={logbook.id || 0} yourCallsign={logbook.callsign} />
+            <ContactForm logbookId={logbook.id || 0} />
             <ContactList logbookId={logbook.id || 0}  />
 
         </Box>

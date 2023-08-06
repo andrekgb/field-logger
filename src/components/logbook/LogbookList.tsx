@@ -50,7 +50,7 @@ const LogbookList = () => {
                                     </Link>
                                 </TableCell>
                                 <TableCell>{logbook.template}</TableCell>
-                                <TableCell>0</TableCell>
+                                <TableCell>{logbook.qsoCount || 0}</TableCell>
                                 <TableCell align={'right'}>
                                     <LogbookOptions logbook={logbook} />
                                 </TableCell>

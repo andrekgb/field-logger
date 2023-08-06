@@ -30,7 +30,7 @@ const LogbookOptions = (props: LogbookOptionsProps) => {
     };
 
     const deleteLogbook = () => {
-        db.logbooks.delete(props.logbook.id || 0)
+        db.deleteLogbook(props.logbook.id || 0)
             .then(() => {
                 toast.success('Logbook deleted');
             })

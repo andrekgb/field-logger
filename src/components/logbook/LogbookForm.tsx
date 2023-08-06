@@ -22,7 +22,7 @@ const LogbookForm = (props: {isOpened: boolean, onCreateSuccess: () => void, onC
     } = useForm<Logbook>();
 
     const onSubmit: SubmitHandler<Logbook> = (data) => {
-        db.logbooks.add({name: data.name, callsign:data.callsign, template: data.template})
+        db.insertLogbook(data)
             .then(() => {
                 toast.success('Logbook created');
                 setValue('name', '');
