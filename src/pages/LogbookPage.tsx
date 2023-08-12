@@ -1,4 +1,4 @@
-import {Box} from "@mui/material";
+import {Box, LinearProgress} from "@mui/material";
 import PageTitle from "../components/PageTitle";
 import { useParams } from 'react-router-dom';
 import {db} from "../model/db";
@@ -14,7 +14,7 @@ const LogbookPage = () => {
         return (
             <Box>
                 <PageTitle title={'Logbook'}/>
-                <pre>Logbook not found</pre>
+                <LinearProgress />
             </Box>
         );
     }
