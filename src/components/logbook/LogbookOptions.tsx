@@ -12,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import {useDispatch} from "react-redux";
 import {displayError} from "../../features/error/errorSlice";
+import LogbookAdifExporter from "./LogbookAdifExporter.tsx";
 
 interface LogbookOptionsProps {
     logbook: Logbook;
@@ -21,6 +22,7 @@ const LogbookOptions = (props: LogbookOptionsProps) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+    const [isExportAdifDialogOpen, setExportAdifDialogOpen] = React.useState(false);
     const dispact = useDispatch();
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -62,6 +64,10 @@ const LogbookOptions = (props: LogbookOptionsProps) => {
         );
     };
 
+    const renderExportAdifDialog = () => {
+        if(!isExportAdifDialogOpen) return null;
+        return(<LogbookAdifExporter logbook={props.logbook} onClose={()=> setExportAdifDialogOpen(false)} />);
+    };
 
     return (
         <div>
@@ -93,8 +99,8 @@ const LogbookOptions = (props: LogbookOptionsProps) => {
                     alert('Feature not implemented yet');
                 }}>Duplicate</MenuItem>
                 <MenuItem onClick={()=> {
+                    setExportAdifDialogOpen(true);
                     handleClose();
-                    alert('Feature not implemented yet');
                 }}>Export .ADI</MenuItem>
                 <Divider />
                 <MenuItem onClick={()=> {
@@ -103,6 +109,7 @@ const LogbookOptions = (props: LogbookOptionsProps) => {
                 }}>Delete</MenuItem>
             </Menu>
             {renderDeleteDialog()}
+            {renderExportAdifDialog()}
         </div>
     );
 };

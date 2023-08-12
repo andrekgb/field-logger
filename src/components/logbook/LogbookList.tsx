@@ -17,6 +17,8 @@ const LogbookList = () => {
     const logbooksEOF = logbooks?.length === 0;
 
 
+
+
     const renderTable = () => {
         if(logbooksEOF) {
             return (

@@ -78,8 +78,6 @@ const LogbookForm = (props: {isOpened: boolean, onCreateSuccess: () => void, onC
                             {...register('template', { required: true })}
                         >
                             <MenuItem value={LogbookTemplate.GENERIC}>Generic</MenuItem>
-                            <MenuItem value={LogbookTemplate.POTA}>POTA</MenuItem>
-                            <MenuItem value={LogbookTemplate.SST}>Slow Speed Contest</MenuItem>
                         </SelectInput>
                         { errors.template && <FormHelperText error={true}>This field is required</FormHelperText> }
                     </FormControl>

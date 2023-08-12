@@ -52,6 +52,7 @@ const ContactList = (props: ContactListProps) => {
                 rows={rows || []}
                 pageSizeOptions={[10, 25, 50, 100]}
                 sortModel={[{field: 'date', sort: 'desc'}]}
+                disableColumnMenu={true}
             />
         </TableContainer>
     );
