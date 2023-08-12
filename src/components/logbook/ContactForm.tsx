@@ -93,6 +93,25 @@ const ContactForm = (props: ContactFormProps) => {
             });
     };
 
+    const toggleSimpleForm = () => {
+        if(!isSimpleForm) {
+            if(!watch('time_str') || !watch('date_str') || (!watch('frequency') && !watch('band')) || !watch('mode')) {
+                alert('You have to fill all the following fields to be able to enable this mode: Date, Time, Frequency/Band, Mode');
+                return;
+            }
+        }
+        setSimpleForm(!isSimpleForm);
+    };
+
+    const renderSimpleForm = () => {
+        if(!isSimpleForm) return null;
+        const str = `Band: ${watch('band')}. ${(watch('frequency') ? `Freq.: ${watch('frequency')} Mhz` : '')} Mode: ${watch('mode')}. Date: ${watch('date_str')}. Time: ${watch('time_str')} `;
+        return (
+            <Box sx={{ width:'100%'}}>
+                <Typography variant={'caption'}>{str}</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Paper sx={{padding: '1rem'}}>
@@ -135,116 +154,123 @@ const ContactForm = (props: ContactFormProps) => {
                         />
                     </FormControl>
                 </Box>
+                {renderSimpleForm()}
+
+                {!isSimpleForm && (
+                    <>
+                        <Box sx={{
+                            display: 'flex',
+                            gap: '1rem'
+                        }}>
+                            <TextField
+                                fullWidth={true}
+                                label={'Time'}
+                                variant={'outlined'}
+                                {...register('time_str', {
+                                    required: true,
+                                    pattern: {
+                                        value: /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/,
+                                        message: 'Invalid time format (HH:mm:ss or HH:mm)',
+                                    }
+                                })}
+                                error={(errors.time_str !== undefined ? true : false)}
+                                disabled={isTimerRunning}
+                                InputLabelProps={{shrink: true}}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position={'end'}>
+                                            <IconButton
+                                                onClick={() => setTimeRunning(!isTimerRunning)}
+                                                color={isTimerRunning ? 'primary' : 'secondary'}
+                                            >
+                                                {isTimerRunning ? <PauseIcon/> : <PlayArrowIcon/>}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <TextField
+                                fullWidth={true}
+                                label={'Date'}
+                                variant={'outlined'}
+                                {...register('date_str', {
+                                    required: true,
+                                    pattern: {
+                                        value: /^\d{4}-\d{2}-\d{2}$/,
+                                        message: 'Invalid date format (YYYY-MM-DD)',
+                                    }
+                                })}
+                                error={(errors.date_str !== undefined ? true : false)}
+                                disabled={isTimerRunning}
+                                InputLabelProps={{shrink: true}}
+                            />
+                        </Box>
+                        <Box sx={{
+                            display: 'flex',
+                            gap: '1rem'
+                        }}>
+                            <TextField
+                                fullWidth={true}
+                                label={'Frequency'}
+                                variant={'outlined'}
+                                {...register('frequency', {
+                                    required: true,
+                                    pattern: {
+                                        value: /^\d{1,3}\.\d{3}$/,
+                                        message: 'Invalid frequency format (e.g., XXX.XXX)'
+                                    }
+                                })}
+                                type={'number'}
+                                error={(errors.frequency !== undefined ? true : false)}
+                                InputLabelProps={{shrink: true}}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position={'end'}>
+                                            <Typography variant={'body2'}>MHz</Typography>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                onBlur={() => {
+                                    const freq = watch('frequency') as unknown as string;
+                                    if (freq?.length > 0) {
+                                        const band = findBandByFrequency(freq as unknown as number);
+                                        if (band) setValue('band', band?.value);
+
+                                        localStorage.setItem('frequency', freq);
+
+                                    }
+                                }}
+                            />
+                            <FormControl variant="standard" fullWidth={true}>
+                                <SelectInput
+                                    label={'Band'}
+                                    variant={'outlined'}
+                                    value={watch('band')}
+                                    {...register('band', {required: true})}
+                                    error={(errors.band !== undefined ? true : false)}
+                                    onBlur={() => {
+                                        const band = watch('band') as string;
+                                        if (band?.length > 0) {
+                                            localStorage.setItem('band', band);
+                                        }
+                                    }}
+                                >
+                                    {bands.map((band) => (
+                                        <MenuItem key={band.value} value={band.value}>
+                                            {band.value.toUpperCase()}
+                                        </MenuItem>
+                                    ))}
+                                </SelectInput>
+                            </FormControl>
+
+                        </Box>
+                    </>
+                )}
                 <Box sx={{
                     display: 'flex',
                     gap: '1rem'
                 }}>
-                    <TextField
-                        fullWidth={true}
-                        label={'Time'}
-                        variant={'outlined'}
-                        {...register('time_str', {
-                            required: true,
-                            pattern: {
-                                value: /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/,
-                                message: 'Invalid time format (HH:mm:ss or HH:mm)',
-                            }
-                        })}
-                        error={(errors.time_str !== undefined ? true : false)}
-                        disabled={isTimerRunning}
-                        InputLabelProps={{shrink: true}}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position={'end'}>
-                                    <IconButton
-                                        onClick={() => setTimeRunning(!isTimerRunning)}
-                                        color={isTimerRunning ? 'primary' : 'secondary'}
-                                    >
-                                        {isTimerRunning ? <PauseIcon/> : <PlayArrowIcon/>}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <TextField
-                        fullWidth={true}
-                        label={'Date'}
-                        variant={'outlined'}
-                        {...register('date_str', {
-                            required: true,
-                            pattern: {
-                                value: /^\d{4}-\d{2}-\d{2}$/,
-                                message: 'Invalid date format (YYYY-MM-DD)',
-                            }
-                        })}
-                        error={(errors.date_str !== undefined ? true : false)}
-                        disabled={isTimerRunning}
-                        InputLabelProps={{shrink: true}}
-                    />
-                </Box>
-                <Box sx={{
-                    display: 'flex',
-                    gap: '1rem'
-                }}>
-                    <TextField
-                        fullWidth={true}
-                        label={'Frequency'}
-                        variant={'outlined'}
-                        {...register('frequency', {
-                            required: true,
-                            pattern: {
-                                value: /^\d{1,3}\.\d{3}$/,
-                                message: 'Invalid frequency format (e.g., XXX.XXX)'
-                            }
-                        })}
-                        type={'number'}
-                        error={(errors.frequency !== undefined ? true : false)}
-                        InputLabelProps={{shrink: true}}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position={'end'}>
-                                    <Typography variant={'body2'}>MHz</Typography>
-                                </InputAdornment>
-                            ),
-                        }}
-                        onBlur={() => {
-                            const freq = watch('frequency') as unknown as string;
-                            if (freq?.length > 0) {
-                                const band = findBandByFrequency(freq as unknown as number);
-                                if (band) setValue('band', band?.value);
-
-                                localStorage.setItem('frequency', freq);
-
-                            }
-                        }}
-                    />
-                    <FormControl variant="standard" fullWidth={true}>
-                        <SelectInput
-                            label={'Band'}
-                            variant={'outlined'}
-                            value={watch('band')}
-                            {...register('band', {required: true})}
-                            error={(errors.band !== undefined ? true : false)}
-                            onBlur={() => {
-                                const band = watch('band') as string;
-                                if (band?.length > 0) {
-                                    localStorage.setItem('band', band);
-                                }
-                            }}
-                        >
-                            {bands.map((band) => (
-                                <MenuItem key={band.value} value={band.value}>
-                                    {band.value.toUpperCase()}
-                                </MenuItem>
-                            ))}
-                        </SelectInput>
-                    </FormControl>
-
-                </Box>
-                <Box sx={{
-                    display: 'flex',
-                    gap: '1rem'
-                }}>
+                    {!isSimpleForm && (
                     <FormControl variant="standard" fullWidth={true}>
                         <SelectInput
                             label={'Mode'}
@@ -263,6 +289,7 @@ const ContactForm = (props: ContactFormProps) => {
                             <MenuItem value={'SSB'}>SSB</MenuItem>
                         </SelectInput>
                     </FormControl>
+                    )}
 
                     <TextField
                         fullWidth={true}
@@ -294,9 +321,7 @@ const ContactForm = (props: ContactFormProps) => {
                         sx={{flexGrow: 1}}
                         control={<Switch
                             checked={isSimpleForm}
-                            onChange={() => {
-                                setSimpleForm(!isSimpleForm);
-                            }}/>} label="Short mode"/>
+                            onChange={toggleSimpleForm}/>} label="Short mode"/>
                     <Button size={'small'} variant={'contained'} onClick={clearForm} color={'secondary'}
                             type={'reset'}>Cancel</Button>
                     <Button size={'small'} variant={'contained'} onClick={handleSubmit(onSubmit)} type={'submit'}
