@@ -11,7 +11,6 @@ import ListItemText from '@mui/material/ListItemText';
 import {useNavigate} from "react-router-dom";
 import {Box, ListItemIcon} from "@mui/material";
 import FactCheckIcon from '@mui/icons-material/FactCheck';
-import AppSettingsAltIcon from '@mui/icons-material/AppSettingsAlt';
 import UTCClock from "../components/UTCClock";
 
 
@@ -41,15 +40,15 @@ const Header: React.FC = () => {
                     navigate('/')
                 }}/>
             </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <AppSettingsAltIcon/>
-                </ListItemIcon>
-                <ListItemText primary="Settings" onClick={() => {
-                    setDrawerOpen(false);
-                    navigate('/settings');
-                }}/>
-            </ListItem>
+            {/*<ListItem button>*/}
+            {/*    <ListItemIcon>*/}
+            {/*        <AppSettingsAltIcon/>*/}
+            {/*    </ListItemIcon>*/}
+            {/*    <ListItemText primary="Settings" onClick={() => {*/}
+            {/*        setDrawerOpen(false);*/}
+            {/*        navigate('/settings');*/}
+            {/*    }}/>*/}
+            {/*</ListItem>*/}
             {/* Add more menu items as needed */}
         </List>
     );

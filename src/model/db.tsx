@@ -53,8 +53,8 @@ export class LogbookDatabase extends Dexie {
     }
 
     async deleteLogbook(id: number): Promise<void> {
+        await this.qsos.bulkDelete(await this.qsos.where('logbookId').equals(id).primaryKeys());
         await this.logbooks.delete(id);
-        await this.qsos.where('logbookId').equals(id).delete();
     }
 
     async insertQSO(qso: QSO): Promise<number> {

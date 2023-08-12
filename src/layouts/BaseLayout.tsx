@@ -9,8 +9,6 @@ const BaseLayout = () => {
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
-            height: '100vh',
-            backgroundColor: '#f5f5f5',
         }}>
             <Header/>
             <Box sx={{
